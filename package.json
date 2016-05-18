@@ -1,7 +1,7 @@
 {
-  "name": "dadi-dustjs-helpers",
+  "name": "dustjs-helpers",
   "version": "1.0.0",
-  "description": "",
+  "description": "A collection of Dust.js helpers used in DADI+ projects",
   "main": "dadi-dustjs-helpers.js",
   "scripts": {
     "test": "mocha test",
@@ -9,14 +9,12 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/eduardoboucas/dadi-dustjs-helpers.git"
+    "url": "git+https://github.com/dadi/dustjs-helpers.git"
   },
-  "author": "",
-  "license": "ISC",
   "bugs": {
-    "url": "https://github.com/eduardoboucas/dadi-dustjs-helpers/issues"
+    "url": "https://github.com/dadi/dustjs-helpers/issues"
   },
-  "homepage": "https://github.com/eduardoboucas/dadi-dustjs-helpers#readme",
+  "homepage": "https://github.com/dadi/dustjs-helpers#readme",
   "devDependencies": {
     "@dadi/web": "^1.4.1",
     "dustjs-linkedin": "^2.7.2",

@@ -1,6 +1,6 @@
 # DADI Dust.js helpers
 
-A collection of Dust.js helpers used on DADI+ projects.
+> A collection of Dust.js helpers used in DADI+ projects.
 
 ## Development
 
