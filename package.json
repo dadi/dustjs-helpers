@@ -2,9 +2,10 @@
   "name": "dadi-dustjs-helpers",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
+  "main": "dadi-dustjs-helpers.js",
   "scripts": {
-    "test": "mocha test"
+    "test": "mocha test",
+    "build": "uglifyjs dadi-dustjs-helpers.js -o dadi-dustjs-helpers.min.js"
   },
   "repository": {
     "type": "git",
@@ -22,7 +23,8 @@
     "env-test": "^1.0.0",
     "mocha": "^2.4.5",
     "should": "^8.3.2",
-    "supertest": "^1.2.0"
+    "supertest": "^1.2.0",
+    "uglify-js": "^2.6.2"
   },
   "dependencies": {
     "htmlstrip-native": "^0.1.3",
