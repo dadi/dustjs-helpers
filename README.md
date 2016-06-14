@@ -1,5 +1,7 @@
 # DADI Dust.js helpers
 
+[![npm version](https://badge.fury.io/js/%40dadi%2Fdustjs-helpers.svg)](https://badge.fury.io/js/%40dadi%2Fdustjs-helpers)
+
 > A collection of Dust.js helpers used in DADI+ projects.
 
 ## Install
