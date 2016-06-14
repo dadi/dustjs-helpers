@@ -2,6 +2,12 @@
 
 > A collection of Dust.js helpers used in DADI+ projects.
 
+## Install
+
+```
+npm install @dadi/dustjs-helpers --save
+```
+
 ## Development
 
 1. Clone this repository
@@ -11,7 +17,7 @@
 3. Add your tests to `test/test.js`
 
 4. Run test suite
-   
+
    ```
    npm test
    ```

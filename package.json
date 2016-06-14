@@ -1,5 +1,5 @@
 {
-  "name": "dustjs-helpers",
+  "name": "@dadi/dustjs-helpers",
   "version": "1.0.0",
   "description": "A collection of Dust.js helpers used in DADI+ projects",
   "main": "dadi-dustjs-helpers.js",
