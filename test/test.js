@@ -377,13 +377,13 @@ describe('Dust Helpers', function (done) {
 
       var tmpl = '<ul>';
       tmpl += '{@paginate page=page totalPages=totalPages path="{pathNoPage}/{n}"}{!';
-      tmpl += ' !}{@eq key="{n}" value="1"}<li><a href="{path}">{n}</a></li>{:else}<li><a href="{path}/">{n}</a></li>{/eq}{!';
+      tmpl += '	!}{@eq key="{n}" value="1"}<li><a href="{path}">{n}</a></li>{:else}<li><a href="{path}/">{n}</a></li>{/eq}{!';
       tmpl += '!}{:current}{!';
-      tmpl += ' !}{@eq key="{n}" value="1"}<li><a href="{path}">{n}</a></li>{:else}<li><a href="{path}/">{n}</a></li>{/eq}{!';
+      tmpl += '	!}{@eq key="{n}" value="1"}<li><a href="{path}">{n}</a></li>{:else}<li><a href="{path}/">{n}</a></li>{/eq}{!';
       tmpl += '!}{:prev}{!';
-      tmpl += ' !}{@eq key="{n}" value="1"}<li><a href="{path}">Prev</a></li>{:else}<li><a href="{path}/">Prev</a></li>{/eq}{!';
+      tmpl += '	!}{@eq key="{n}" value="1"}<li><a href="{path}">Prev</a></li>{:else}<li><a href="{path}/">Prev</a></li>{/eq}{!';
       tmpl += '!}{:next}{!';
-      tmpl += ' !}<li><a href="{path}/">Next</a></li>{!';
+      tmpl += '	!}<li><a href="{path}/">Next</a></li>{!';
       tmpl += '!}{/paginate}';
       tmpl += '</ul>';
 
@@ -397,13 +397,13 @@ describe('Dust Helpers', function (done) {
 
       var tmpl = '<ul>';
       tmpl += '{@paginate page=page totalPages=totalPages path="{pathNoPage}/{n}"}{!';
-      tmpl += ' !}{@eq key="{n}" value="1"}<li><a href="{path}">{n}</a></li>{:else}<li><a href="{path}/">{n}</a></li>{/eq}{!';
+      tmpl += '	!}{@eq key="{n}" value="1"}<li><a href="{path}">{n}</a></li>{:else}<li><a href="{path}/">{n}</a></li>{/eq}{!';
       tmpl += '!}{:current}{!';
-      tmpl += ' !}{@eq key="{n}" value="1"}<li><a href="{path}">{n}</a></li>{:else}<li><a href="{path}/">{n}</a></li>{/eq}{!';
+      tmpl += '	!}{@eq key="{n}" value="1"}<li><a href="{path}">{n}</a></li>{:else}<li><a href="{path}/">{n}</a></li>{/eq}{!';
       tmpl += '!}{:prev}{!';
-      tmpl += ' !}{@eq key="{n}" value="1"}<li><a href="{path}">Prev</a></li>{:else}<li><a href="{path}/">Prev</a></li>{/eq}{!';
+      tmpl += '	!}{@eq key="{n}" value="1"}<li><a href="{path}">Prev</a></li>{:else}<li><a href="{path}/">Prev</a></li>{/eq}{!';
       tmpl += '!}{:next}{!';
-      tmpl += ' !}<li><a href="{path}/">Next</a></li>{!';
+      tmpl += '	!}<li><a href="{path}/">Next</a></li>{!';
       tmpl += '!}{/paginate}';
       tmpl += '</ul>';
 
@@ -417,24 +417,150 @@ describe('Dust Helpers', function (done) {
     it('should render a pagination block', function(done) {
       var tmpl = '<ul>';
       tmpl += '{@paginate page=page totalPages=totalPages path="{pathNoPage}/{n}"}{!';
-      tmpl += ' !}{@eq key="{n}" value="1"}<li><a href="{path}">{n}</a></li>{:else}<li><a href="{path}/">{n}</a></li>{/eq}{!';
+      tmpl += '	!}{@eq key="{n}" value="1"}<li><a href="{path}">{n}</a></li>{:else}<li><a href="{path}/">{n}</a></li>{/eq}{!';
       tmpl += '!}{:current}{!';
-      tmpl += ' !}{@eq key="{n}" value="1"}<li><a href="{path}">{n}</a></li>{:else}<li><a href="{path}/">{n}</a></li>{/eq}{!';
+      tmpl += '	!}{@eq key="{n}" value="1"}<li><a href="{path}">{n}</a></li>{:else}<li><a href="{path}/">{n}</a></li>{/eq}{!';
       tmpl += '!}{:prev}{!';
-      tmpl += ' !}{@eq key="{n}" value="1"}<li><a href="{path}">Prev</a></li>{:else}<li><a href="{path}/">Prev</a></li>{/eq}{!';
+      tmpl += '	!}{@eq key="{n}" value="1"}<li><a href="{path}">Prev</a></li>{:else}<li><a href="{path}/">Prev</a></li>{/eq}{!';
       tmpl += '!}{:next}{!';
-      tmpl += ' !}<li><a href="{path}/">Next</a></li>{!';
+      tmpl += '	!}<li><a href="{path}/">Next</a></li>{!';
       tmpl += '!}{/paginate}';
       tmpl += '</ul>';
 
       var expected = '<ul><li><a href="/articles/">1</a></li><li><a href="/articles/2/">2</a></li><li><a href="/articles/3/">3</a></li><li><a href="/articles/2/">Next</a></li></ul>';
 
       dust.renderSource(tmpl, { page: 1, totalPages: 3, pathNoPage: '/articles'  }, function (err, out) {
-        if (err) done(err);
+        if (err) return done(err);
         out.should.eql(expected);
         done();
       });
-
     });
+
+    it('should render blocks in the right order', function(done) {
+      var tmpl = '{@paginate page=page totalPages=totalPages path="/root"}';
+      tmpl += '. ~ ';
+      tmpl += '{:current}Current ~ ';
+      tmpl += '{:prev}Prev ~ ';
+      tmpl += '{:next}Next ~ ';
+      tmpl += '{:else}Else ~ ';
+      tmpl += '{/paginate}';
+
+      var expected = 'Prev ~ . ~ . ~ Current ~ . ~ . ~ Next ~ ';
+
+      dust.renderSource(tmpl, { page: 3, totalPages: 5  }, function (err, out) {
+        if (err) return done(err);
+        out.should.eql(expected);
+        done();
+      });
+    });
+
+    it('should render only the else block when there is only one page', function(done) {
+      var tmpl = '{@paginate page=page totalPages=totalPages path="/root"}';
+      tmpl += '{path} ~ ';
+      tmpl += '{:current}Current ~ ';
+      tmpl += '{:prev}Prev ~ ';
+      tmpl += '{:next}Next ~ ';
+      tmpl += '{:else}Else ~ ';
+      tmpl += '{/paginate}';
+
+      var expected = 'Else ~ ';
+
+      dust.renderSource(tmpl, { page: 1, totalPages: 1  }, function (err, out) {
+        if (err) return done(err);
+        out.should.eql(expected);
+        done();
+      });
+    });
+
+    it('should not render the else block when there are multiple pages', function(done) {
+      var tmpl = '{@paginate page=page totalPages=totalPages path="/root"}';
+      tmpl += 'Step ~ ';
+      tmpl += '{:else}Else ~ ';
+      tmpl += '{/paginate}';
+
+      var expected = 'Step ~ ';
+
+      dust.renderSource(tmpl, { page: 1, totalPages: 2  }, function (err, out) {
+        if (err) return done(err);
+        out.should.equal(expected);
+        done();
+      });
+    });
+
+    it('should only render current if it is the only block', function(done) {
+      var tmpl = '{@paginate page=page totalPages=totalPages path="/root/{n}"}';
+      tmpl += '{:current}{path}';
+      tmpl += '{/paginate}';
+
+      var expected = '/root/2';
+
+      dust.renderSource(tmpl, { page: 2, totalPages: 3  }, function (err, out) {
+        if (err) return done(err);
+        out.should.eql(expected);
+        done();
+      });
+    });
+
+    it('should handle trailing slashes', function(done) {
+      var tmpl = '{@paginate page=page totalPages=totalPages path="/root/{n}/"}';
+      tmpl += 'Step: {path} ~ ';
+      tmpl += '{:current}Current: {path} ~ ';
+      tmpl += '{/paginate}';
+
+      var expected = 'Step: /root/ ~ Current: /root/2/ ~ Step: /root/3/ ~ ';
+
+      dust.renderSource(tmpl, { page: 2, totalPages: 3  }, function (err, out) {
+        if (err) return done(err);
+        out.should.eql(expected);
+        done();
+      });
+    });
+
+    it('should render correct paths when using a query param', function(done) {
+      var tmpl = '{@paginate page=page totalPages=totalPages path="/root" param="page"}';
+      tmpl += '{path} ~ ';
+      tmpl += '{:current}Current: {path} ~ ';
+      tmpl += '{/paginate}';
+
+      var expected = '/root ~ Current: /root?page=2 ~ /root?page=3 ~ ';
+
+      dust.renderSource(tmpl, { page: 2, totalPages: 3  }, function (err, out) {
+        if (err) return done(err);
+        out.should.eql(expected);
+        done();
+      });
+    });
+
+    it('should render correct paths when using a query param and existing searchstring', function(done) {
+      var tmpl = '{@paginate page=page totalPages=totalPages path="/root?one=1&two=three" param="page"}';
+      tmpl += '{path|s} ~ ';
+      tmpl += '{:current}Current: {path|s} ~ ';
+      tmpl += '{/paginate}';
+
+      var expected = '/root?one=1&two=three ~ Current: /root?one=1&two=three&page=2 ~ /root?one=1&two=three&page=3 ~ ';
+
+      dust.renderSource(tmpl, { page: 2, totalPages: 3  }, function (err, out) {
+        if (err) return done(err);
+        out.should.eql(expected);
+        done();
+      });
+    });
+
+    it('should render correct paths when using a query param which is already in the searchstring', function(done) {
+      var tmpl = '{@paginate page=page totalPages=totalPages path="/root?one=1&two=three" param="page"}';
+      tmpl += '{:current}Current: {path|s} ~ ';
+      tmpl += '{:prev}Prev: {path|s} ~ ';
+      tmpl += '{:next}Next: {path|s} ~ ';
+      tmpl += '{/paginate}';
+
+      var expected = 'Prev: /root?one=1&two=three ~ Current: /root?one=1&two=three&page=2 ~ Next: /root?one=1&two=three&page=3 ~ ';
+
+      dust.renderSource(tmpl, { page: 2, totalPages: 3  }, function (err, out) {
+        if (err) return done(err);
+        out.should.eql(expected);
+        done();
+      });
+    });
+
   });
 });
