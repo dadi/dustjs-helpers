@@ -425,21 +425,25 @@
   */
   dust.helpers.paginate = function(chunk, context, bodies, params) {
     var err;
-    if(!('page' in params && 'totalPages' in params && 'path' in params)) {
+
+    if (!('page' in params && 'totalPages' in params && 'path' in params)) {
       err = new Error('Insufficient information provided to @paginate helper');
     }
+
     var current = parseInt(params.page, 10);
     var totalPages = parseInt(params.totalPages, 10);
-    if(!(isFinite(current) && isFinite(totalPages))) {
+
+    if (!(isFinite(current) && isFinite(totalPages))) {
       err = new Error('Parameters provided to @paginate helper are not integers');
     }
+
     var queryParam = params.param;
     var paginateContext = {
       n: current,
       path: ''
     }
 
-    if(err) {
+    if (err) {
       console.log(err);
       return chunk;
     }
@@ -448,21 +452,25 @@
 
     function constructPath(pathPattern, n) {
       var outputPath = context.resolve(pathPattern);
+
       if (queryParam) {
        var parsedPath = url.parse(outputPath, true); //parse search string to query object
         parsedPath.query[queryParam] = n;
+
         if (n === 1) {
           delete parsedPath.query[queryParam];
         }
+
         delete parsedPath.search; //otherwise the search string is used instead of the query object
         outputPath = url.format(parsedPath);
       }
       else {
-        if(n === 1) {
+        if (n === 1) {
           // this is to make the path just the base path, without the number
           outputPath = (outputPath || '').replace(/1\/?$/, '');
         }
       }
+
       return outputPath;
     }
 
@@ -502,14 +510,18 @@
       if (tightness === 'increase') {
         now = start;
         final = end;
-        while(now < final) {
-          if(now !== start) {
+
+        while (now < final) {
+          if (now !== start) {
             steps.push(now);
           }
+
           stepSize = getStepSize(final - now);
-          if(stepSize > 1) {
+
+          if (stepSize > 1) {
             steps.push('.');
           }
+
           now += stepSize;
         }
       }
@@ -517,15 +529,19 @@
         now = end;
         final = start;
         while(now > final) {
-          if(now !== end) {
+          if (now !== end) {
             steps.push(now);
           }
+
           stepSize = getStepSize(now - final);
-          if(stepSize > 1) {
+
+          if (stepSize > 1) {
             steps.push('.');
           }
+
           now -= stepSize;
         }
+
         steps.reverse();
       }
 
@@ -534,13 +550,13 @@
 
     // Only one page
     if (!totalPages || totalPages === 1) {
-      if(bodies.else) {
+      if (bodies.else) {
         return chunk.render(bodies.else, context);
       }
       return chunk;
     }
 
-    if(current > 1) {
+    if (current > 1) {
       // Prev
       printStep(bodies.prev, current - 1);
       // First step
@@ -552,7 +568,7 @@
     // Current
     printStep(bodies.current, current);
 
-    if(current < totalPages) {
+    if (current < totalPages) {
       // Post current
       _.each(makeSteps(current, totalPages, 'decrease'), printStepOrGap);
       // Last step
