@@ -1,3 +1,5 @@
 config/
 log/
 node_modules/
+coverage/
+*.svg

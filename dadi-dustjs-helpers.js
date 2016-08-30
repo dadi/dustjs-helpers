@@ -1,43 +1,42 @@
-(function (dust) {
+;(function (dust) {
   if (typeof exports !== undefined) {
-    var dust = require('dustjs-linkedin');
-    var JSON5 = require('json5');
-    var marked = require('marked');
-    var moment = require('moment');
-    var pluralist = require('pluralist');
-    var _ = require('underscore');
-    var s = require('underscore.string');
-    var html_strip = require('htmlstrip-native');
+    var dust = require('dustjs-linkedin')
+    var JSON5 = require('json5')
+    var marked = require('marked')
+    var moment = require('moment')
+    var pluralist = require('pluralist')
+    var _ = require('underscore')
+    var s = require('underscore.string')
+    var html_strip = require('htmlstrip-native')
   }
 
   /*
   * Returns the supplied 'data' parameter truncated using the supplied 'length' parameter
   * Usage: {@Truncate data="{body}" length="250" ellipsis="true"/}
   */
-  dust.helpers.Truncate = function(chunk, context, bodies, params) {
-      var data   = context.resolve(params.data),
-          length = context.resolve(params.length),
-          ellipsis = context.resolve(params.ellipsis);
-      var str;
-      if (ellipsis === 'true' && data.length > length) {
-          str = data.substr(0, length);
-          if(data) {
-              str = str.replace(/[\W]*$/, '&hellip;');
-          }
+  dust.helpers.Truncate = function (chunk, context, bodies, params) {
+    var data = context.resolve(params.data),
+      length = context.resolve(params.length),
+      ellipsis = context.resolve(params.ellipsis)
+    var str
+    if (ellipsis === 'true' && data.length > length) {
+      str = data.substr(0, length)
+      if (data) {
+        str = str.replace(/[\W]*$/, '&hellip;')
       }
-      else {
-          str = data.substr(0, length);
-      }
-      return chunk.write(str);
+    } else {
+      str = data.substr(0, length)
+    }
+    return chunk.write(str)
   }
 
   /*
   * Returns the supplied 'data' parameter trimmed of whitespace on both left and right sides
   * Usage: {@Trim data="{body}"/}
   */
-  dust.helpers.Trim = function(chunk, context, bodies, params) {
-      var data   = context.resolve(params.data);
-      return chunk.write(data.trim());
+  dust.helpers.Trim = function (chunk, context, bodies, params) {
+    var data = context.resolve(params.data)
+    return chunk.write(data.trim())
   }
 
   /*
@@ -45,22 +44,21 @@
   * Pass a unix epoch time (expects milliseconds) in the 'unix' parameter. For seconds use 'unix_sec'
   * Usage: {@formatDate data="{body}" [unix="{lastModifiedAt}"] format="YYYY-MM-DDTh:mm:ss+01:00"/}
   */
-  dust.helpers.formatDate = function(chunk, context, bodies, params) {
-      var format = context.resolve(params.format);
-      var parseFormat = context.resolve(params.parseFormat);
+  dust.helpers.formatDate = function (chunk, context, bodies, params) {
+    var format = context.resolve(params.format)
+    var parseFormat = context.resolve(params.parseFormat)
 
-      if (params.unix_sec) {
-          var unix_sec = context.resolve(params.unix_sec);
-          return chunk.write(moment.unix(unix_sec).format(format));
-      }
-      else if (params.unix) {
-          var unix = context.resolve(params.unix);
-          return chunk.write(moment.unix(unix / 1000).format(format));
-      }
-      else {
-          var data = context.resolve(params.data);
-          return chunk.write(moment(data, parseFormat || format).format(format));
-      }
+    if (params.unix_sec) {
+      var unix_sec = context.resolve(params.unix_sec)
+      return chunk.write(moment.unix(unix_sec).format(format))
+    }
+    else if (params.unix) {
+      var unix = context.resolve(params.unix)
+      return chunk.write(moment.unix(unix / 1000).format(format))
+    } else {
+      var data = context.resolve(params.data)
+      return chunk.write(moment(data, parseFormat || format).format(format))
+    }
   }
 
   /*
@@ -78,105 +76,101 @@
   *     {@formatNumber data="12345" localeString="en-GB" /} => 12,345
   *     {@formatNumber data="12345" localeString="en-GB" style="currency" currency="GBP" minimumFractionDigits="0"/} => £12,345
   */
-  dust.helpers.formatNumber = function(chunk, context, bodies, params) {
-      var data         = context.resolve(params.data);
-      var localeString = context.resolve(params.localeString);
-      var style        = context.resolve(params.style);
-      var currency     = context.resolve(params.currency);
-      var fractionDigits = context.resolve(params.minimumFractionDigits);
+  dust.helpers.formatNumber = function (chunk, context, bodies, params) {
+    var data = context.resolve(params.data)
+    var localeString = context.resolve(params.localeString)
+    var style = context.resolve(params.style)
+    var currency = context.resolve(params.currency)
+    var fractionDigits = context.resolve(params.minimumFractionDigits)
 
-      var options      = {style: 'decimal', minimumFractionDigits: 0};
+    var options = {style: 'decimal', minimumFractionDigits: 0}
 
-      if (style) options.style = style;
-      if (currency) options.currency = currency;
-      if (fractionDigits) options.minimumFractionDigits = fractionDigits;
+    if (style) options.style = style
+    if (currency) options.currency = currency
+    if (fractionDigits) options.minimumFractionDigits = fractionDigits
 
-      if (data) {
-          return chunk.write(data);
-      }
+    if (data) {
+      return chunk.write(data)
+    }
   }
 
   /*
   * Returns the markdown content formatted as HTML
   */
-  dust.helpers.markdown = function(chunk, context, bodies, params) {
+  dust.helpers.markdown = function (chunk, context, bodies, params) {
+    var renderer = new marked.Renderer()
+    renderer.link = function (href, title, text) {
+      var attrArray = href.split('|')
+      var attrs = {}
 
-      var renderer = new marked.Renderer();
-      renderer.link = function (href, title, text) {
+      var first = attrArray.shift()
+      if (first) href = first
 
-          var attrArray = href.split('|');
-          var attrs = {};
-
-          var first = attrArray.shift();
-          if (first) href = first;
-
-          for (var i = 0; i < attrArray.length; i++) {
-              var attr = attrArray[i];
-              var attrName = "";
-              var attrValue = "";
-              var pos = attr.indexOf('=');
-              if (pos > 0) {
-                  attrName = attr.substr(0, pos);
-                  attrValue = attr.substr(pos + 1);
-              }
-              attrs[attrName] = attrValue;
-          };
-
-          var attrString = "";
-          Object.keys(attrs).forEach(function (key) {
-              attrString = attrString + key + '="' + attrs[key] + '" ';
-          });
-
-          if (title && title.length > 0) {
-              title = ' title="' + title + '"';
-          }
-          else {
-            title = '';
-          }
-
-          return '<a href="' + href + '" ' + attrString + title + '>' + text + '</a>';
+      for (var i = 0; i < attrArray.length; i++) {
+        var attr = attrArray[i]
+        var attrName = ''
+        var attrValue = ''
+        var pos = attr.indexOf('=')
+        if (pos > 0) {
+          attrName = attr.substr(0, pos)
+          attrValue = attr.substr(pos + 1)
+        }
+        attrs[attrName] = attrValue
       }
 
-      if (bodies.block) {
-          return chunk.capture(bodies.block, context, function(string, chunk) {
+      var attrString = ''
+      Object.keys(attrs).forEach(function (key) {
+        attrString = attrString + key + '="' + attrs[key] + '" '
+      })
 
-              chunk.end(marked(string, { renderer: renderer }));
-          });
+      if (title && title.length > 0) {
+        title = ' title="' + title + '"'
+      } else {
+        title = ''
       }
-      return chunk;
-  };
+
+      return '<a href="' + href + '" ' + attrString + title + '>' + text + '</a>'
+    }
+
+    if (bodies.block) {
+      return chunk.capture(bodies.block, context, function (string, chunk) {
+        chunk.end(marked(string, { renderer: renderer }))
+      })
+    }
+    return chunk
+  }
 
   /*
   * Returns the markdown content formatted as HTML, but without <p> wrappers
   */
-  dust.helpers.soberMarkdown = function(chunk, context, bodies, params) {
-      if (bodies.block) {
-          return chunk.capture(bodies.block, context, function(string, chunk) {
-              var md = marked(string);
+  dust.helpers.soberMarkdown = function (chunk, context, bodies, params) {
+    if (bodies.block) {
+      return chunk.capture(bodies.block, context, function (string, chunk) {
+        var md = marked(string)
 
-              // Replace </p><p> with <br>
-              var str = md.replace(/<\/p><p[^>]*>/igm, '<br>');
+        // Replace </p><p> with <br>
+        var str = md.replace(/<\/p><p[^>]*>/igm, '<br>')
 
-              // Remove wrapping <p></p> tags
-              str = str.replace(/<p[^>]*>(.*?)<\/p>/igm, "$1");
+        // Remove wrapping <p></p> tags
+        str = str.replace(/<p[^>]*>(.*?)<\/p>/igm, '$1')
 
-              chunk.end(str);
-          });
-      }
-      return chunk;
-  };
+        chunk.end(str)
+      })
+    }
+    return chunk
+  }
 
   /*
   * Returns the supplied 'str' parameter with any instanses of {...} resolved to {vartoreplace}
   * Usage: {@forceRender str="{body}" value="{vartoreplace}" /}
   */
-  dust.helpers.forceRender = function(chunk, context, bodies, params) {
-      str = context.resolve(params.str);
-      value = context.resolve(params.value);
+  dust.helpers.forceRender = function (chunk, context, bodies, params) {
+    str = context.resolve(params.str)
+    value = context.resolve(params.value)
 
-      str = str.replace(/{.*?}/gmi, value);
+    str = str.replace(/{.*?}/gmi, value)
 
-      return chunk.write(str);
+    return chunk.write(str)
   }
 
   /*
@@ -189,153 +183,118 @@
   * {/iter}
   * ```
   */
-  dust.helpers.iter = function(chunk, context, bodies, params) {
+  dust.helpers.iter = function (chunk, context, bodies, params) {
+    params.items = params.items || []
+    params.from = params.from || 0
+    params.to = params.to === 0 ? 0 : params.to || params.items.length
 
-      params.items = params.items || [];
-      params.from = params.from || 0;
-      params.to = params.to === 0 ? 0 : params.to || params.items.length;
+    var direction
+    if (params.from < params.to) {
+      direction = 1
+    } else {
+      direction = -1
+      // to reach the beginning of the array we need to go to -1
+      params.to--
+    }
 
-      var direction;
-      if(params.from < params.to) {
-          direction = 1;
+    var metaContext = {
+      $idx: params.from,
+      $len: params.items.length
+    }
+    context = context.push(metaContext)
+
+    while(metaContext.$idx !== params.to) {
+      if (params.items[metaContext.$idx]) {
+        chunk = chunk.render(bodies.block, context.push(params.items[metaContext.$idx]))
       }
-      else {
-          direction = -1;
-          // to reach the beginning of the array we need to go to -1
-          params.to--;
-      }
-
-      var metaContext = {
-          $idx: params.from,
-          $len: params.items.length
-      };
-      context = context.push(metaContext);
-
-      while(metaContext.$idx !== params.to) {
-          if(params.items[metaContext.$idx]) {
-              chunk = chunk.render(bodies.block, context.push(params.items[metaContext.$idx]));
-          }
-          metaContext.$idx += direction;
-      }
-      // pop metaContext
-      context.pop();
-      return chunk;
-  };
-
+      metaContext.$idx += direction
+    }
+    // pop metaContext
+    context.pop()
+    return chunk
+  }
 
   /*
   * Strips HTML from passed content
   * Uses: https://github.com/zaro/node-htmlstrip-native
   */
-  dust.helpers.htmlstrip = function(chunk, context, bodies, params) {
-      return chunk.capture(bodies.block, context, function(data, chunk){
-          var options = {
-              include_script: false, // exclude the content of <script> tags
-              include_style: false, // exclude the content of <style> tags
-              compact_whitespace: false // compact consecutive '\s' whitespace into single char
-          };
+  dust.helpers.htmlstrip = function (chunk, context, bodies, params) {
+    return chunk.capture(bodies.block, context, function (data, chunk) {
+      var options = {
+        include_script: false, // exclude the content of <script> tags
+        include_style: false, // exclude the content of <style> tags
+        compact_whitespace: false // compact consecutive '\s' whitespace into single char
+      }
 
-          data = html_strip.html_strip(data, options).trim();
+      data = html_strip.html_strip(data, options).trim()
 
-          chunk.write(data);
-          chunk.end();
-      });
-  };
+      chunk.write(data)
+      chunk.end()
+    })
+  }
 
   /*
   * Default values for partials
   */
 
-  dust.helpers.defaultParam = function(chunk, context, bodies, params) {
-      var key = params.key,
-          value = params.value;
+  dust.helpers.defaultParam = function (chunk, context, bodies, params) {
+    var key = params.key,
+      value = params.value
 
-      if(typeof context.get(key) === 'undefined') {
-          context.global[key] = value;
-      }
-  };
+    if (typeof context.get(key) === 'undefined') {
+      context.global[key] = value
+    }
+  }
 
   /*
   * Numbers with commas
   */
 
-  dust.helpers.numberCommas = function(chunk, context, bodies, params) {
-      return chunk.capture(bodies.block, context, function(data, chunk){
-          data = data.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")
+  dust.helpers.numberCommas = function (chunk, context, bodies, params) {
+    return chunk.capture(bodies.block, context, function (data, chunk) {
+      data = data.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',')
 
-          chunk.write(data);
-          chunk.end();
-      });
-  };
+      chunk.write(data)
+      chunk.end()
+    })
+  }
 
-  dust.helpers.plural = function(chunk, context, bodies, params) {
-      var options = {
-          val: params.val,
-          auto: params.auto,
-          one: params.one,
-          many: params.many
-      }
+  dust.helpers.plural = function (chunk, context, bodies, params) {
+    var options = {
+      val: params.val,
+      auto: params.auto,
+      one: params.one,
+      many: params.many
+    }
 
-      if (typeof options.val !== 'undefined') {
-        var multiple = Boolean(Number(options.val) - 1);
+    if (typeof options.val !== 'undefined') {
+      var multiple = Boolean(Number(options.val) - 1)
 
-        if (typeof options.auto !== 'undefined') {
-          return chunk.write( multiple ? pluralist.plural(options.auto).anglicised_plural : pluralist.singular(options.auto).singular_suffix );
-        }
-        else if (options.one && options.many) {
-          var str = multiple ? options.many : options.one;
-          return chunk.write( str );
-        }
+      if (typeof options.auto !== 'undefined') {
+        return chunk.write(multiple ? pluralist.plural(options.auto).anglicised_plural : pluralist.singular(options.auto).singular_suffix)
       }
-      else if (options.auto) {
-        return chunk.write(options.auto);
+      else if (options.one && options.many) {
+        var str = multiple ? options.many : options.one
+        return chunk.write(str)
       }
-      else {
-        return chunk.write("");
-      }
+    }
+    else if (options.auto) {
+      return chunk.write(options.auto)
+    } else {
+      return chunk.write('')
+    }
   }
   /*
   * Encode html to json valid
   */
-  dust.helpers.htmlEncode = function(chunk, context, bodies, params) {
-      return chunk.capture(bodies.block, context, function(data, chunk){
-          data = JSON.stringify(data.toString());
+  dust.helpers.htmlEncode = function (chunk, context, bodies, params) {
+    return chunk.capture(bodies.block, context, function (data, chunk) {
+      data = JSON.stringify(data.toString())
 
-          chunk.write(data);
-          chunk.end();
-      });
-  };
-
-  /*
-  * Generate URLs based on routes by sending in page names & parameters
-  * Usage:
-  * ```
-  * {@url page="pagename" param="val" otherparam=variableval/}
-  * ```
-  */
-  dust.helpers.url = (function() {
-      var core;
-      return function(chunk, context, bodies, params) {
-          if (!core) {
-              // requiring core here is due to this file is loaded by the core, and so requiring it elsewhere won't work
-              core = require(__dirname + '/../');
-          }
-
-          // Ensure a page name is input
-          if (typeof params.page === 'undefined') {
-              throw new Error('The @url helper needs a page to work. Please send it in as a string (double quote marks if not referencing a variable).');
-          }
-
-          // Get the page
-          var component = core.getComponent(params.page);
-          if (!component) {
-              throw new Error('The @url helper could not find a page with the key "' + params.page + '".');
-          }
-
-          // Get the route
-          return component.page.toPath(_.omit(params, 'page'));
-      };
-  }());
+      chunk.write(data)
+      chunk.end()
+    })
+  }
 
   /*
   * Use the Underscore.JS Slugify method to generate a URL friendly string
@@ -344,14 +303,14 @@
   * {@slugify}{title}{/slugify}
   * ```
   */
-  dust.helpers.slugify = function(chunk, context, bodies, params) {
-      return chunk.capture(bodies.block, context, function(data, chunk){
-          data = s.slugify(data);
+  dust.helpers.slugify = function (chunk, context, bodies, params) {
+    return chunk.capture(bodies.block, context, function (data, chunk) {
+      data = s.slugify(data)
 
-          chunk.write(data);
-          chunk.end();
-      });
-  };
+      chunk.write(data)
+      chunk.end()
+    })
+  }
 
   /**
    * Performs a global search and replace within a string.
@@ -365,21 +324,21 @@
    * replace - the character or sequence used to replace
    */
   dust.helpers.replace = function (chunk, context, bodies, params) {
-    var str = context.resolve(params.str);
-    var search = context.resolve(params.search);
-    var replace = context.resolve(params.replace);
+    var str = context.resolve(params.str)
+    var search = context.resolve(params.search)
+    var replace = context.resolve(params.replace)
 
-    var result = str.replace(new RegExp(escapeRegExp(search), 'g'), replace);
+    var result = str.replace(new RegExp(escapeRegExp(search), 'g'), replace)
 
-    return chunk.write(result);
-  };
+    return chunk.write(result)
+  }
 
   /**
    * Processes the given string to escape special meta characters used within
    * Regular Expressions. This is used by the replace helper.
    */
-  function escapeRegExp(string) {
-      return string.replace(/([.*+?^=!:${}()|\[\]\/\\])/g, "\\$1");
+  function escapeRegExp (string) {
+    return string.replace(/([.*+?^=!:${}()|\[\]\/\\])/g, '\\$1')
   }
 
   /*
@@ -399,127 +358,143 @@
   * {/paginate}
   * ```
   */
-  dust.helpers.paginate = function(chunk, context, bodies, params) {
-    var err;
-    if(!('page' in params && 'totalPages' in params && 'path' in params)) {
-      err = new Error('Insufficient information provided to @paginate helper');
+  dust.helpers.paginate = function (chunk, context, bodies, params) {
+    var err
+
+    if (!('page' in params && 'totalPages' in params && 'path' in params)) {
+      err = new Error('Insufficient information provided to @paginate helper')
     }
-    var current = parseInt(params.page, 10);
-    var totalPages = parseInt(params.totalPages, 10);
-    if(!(isFinite(current) && isFinite(totalPages))) {
-      err = new Error('Parameters provided to @paginate helper are not integers');
+
+    var current = parseInt(params.page, 10)
+    var totalPages = parseInt(params.totalPages, 10)
+
+    if (!(isFinite(current) && isFinite(totalPages))) {
+      err = new Error('Parameters provided to @paginate helper are not integers')
     }
-    var path = params.path;
+
+    var path = params.path
     var paginateContext = {
       n: current,
       path: ''
-    };
-    if(err) {
-      console.log(err);
-      return chunk;
     }
-    var context = context.push(paginateContext);
 
-    function printStep(body, n) {
-      paginateContext.n = n;
-      paginateContext.path = context.resolve(params.path);
-      if(n === 1) {
+    if (err) {
+      console.log(err)
+      return chunk
+    }
+
+    var context = context.push(paginateContext)
+
+    function printStep (body, n) {
+      paginateContext.n = n
+      paginateContext.path = context.resolve(params.path)
+
+      if (n === 1) {
         // this is to make the path just the base path, without the number
-        paginateContext.path = (paginateContext.path || '').replace(/1\/?$/, '');
+        paginateContext.path = (paginateContext.path || '').replace(/1\/?$/, '')
       }
-      chunk.render(body, context);
+
+      chunk.render(body, context)
     }
-    var printGap = bodies.gap ? printStep.bind(null, bodies.gap) : function(){};
-    function printStepOrGap(step) {
-      if(step === '.') {
-        printGap();
-      }
-      else {
-        printStep(bodies.block, step);
+
+    var printGap = bodies.gap ? printStep.bind(null, bodies.gap) : function () {}
+
+    function printStepOrGap (step) {
+      if (step === '.') {
+        printGap()
+      } else {
+        printStep(bodies.block, step)
       }
     }
 
-    function getStepSize(distance) {
-      if(distance > 550) { return 500; }
-      else if(distance > 110) { return 100; }
-      else if(distance > 53) { return distance - 25; }
-      else if(distance > 23) { return distance - 10; }
-      else if(distance >= 10) { return distance - 5; }
-      else if(distance >= 5) { return distance - 2; }
-      else { return 1; }
+    function getStepSize (distance) {
+      if (distance > 550) { return 500; }
+      else if (distance > 110) { return 100; }
+      else if (distance > 53) { return distance - 25; }
+      else if (distance > 23) { return distance - 10; }
+      else if (distance >= 10) { return distance - 5; }
+      else if (distance >= 5) { return distance - 2; } else { return 1; }
     }
-    function makeSteps(start, end, tightness) {
+
+    function makeSteps (start, end, tightness) {
       // start & end are non-inclusive
-      var now, final, stepSize, steps = [];
+      var now, final, stepSize, steps = []
 
-      if(tightness === 'increase') {
-        now = start;
-        final = end;
-        while(now < final) {
-          if(now !== start) {
-            steps.push(now);
+      if (tightness === 'increase') {
+        now = start
+        final = end
+        while (now < final) {
+          if (now !== start) {
+            steps.push(now)
           }
-          stepSize = getStepSize(final - now);
-          if(stepSize > 1) {
-            steps.push('.');
+
+          stepSize = getStepSize(final - now)
+
+          if (stepSize > 1) {
+            steps.push('.')
           }
-          now += stepSize;
+
+          now += stepSize
         }
-      }
-      else { // decrease
-        now = end;
-        final = start;
-        while(now > final) {
-          if(now !== end) {
-            steps.push(now);
+      } else { // decrease
+        now = end
+        final = start
+
+        while (now > final) {
+          if (now !== end) {
+            steps.push(now)
           }
-          stepSize = getStepSize(now - final);
-          if(stepSize > 1) {
-            steps.push('.');
+
+          stepSize = getStepSize(now - final)
+
+          if (stepSize > 1) {
+            steps.push('.')
           }
-          now -= stepSize;
+
+          now -= stepSize
         }
-        steps.reverse();
+
+        steps.reverse()
       }
 
-      return steps;
+      return steps
     }
 
     // Only one page
-    if(!totalPages || totalPages === 1) {
-      if(bodies.else) {
-        return chunk.render(bodies.else, context);
+    if (!totalPages || totalPages === 1) {
+      if (bodies.else) {
+        return chunk.render(bodies.else, context)
       }
-      return chunk;
+      return chunk
     }
 
-    if(current > 1) {
+    if (current > 1) {
       // Prev
-      if(bodies.prev) {
-        printStep(bodies.prev, current - 1);
+      if (bodies.prev) {
+        printStep(bodies.prev, current - 1)
       }
       // First step
-      printStep(bodies.block, 1);
+      printStep(bodies.block, 1)
       // Pre current
-      _.each(makeSteps(1, current, 'increase'), printStepOrGap);
+      _.each(makeSteps(1, current, 'increase'), printStepOrGap)
     }
 
     // Current
-    printStep(bodies.current, current);
+    printStep(bodies.current, current)
 
-    if(current < totalPages) {
+    if (current < totalPages) {
       // Post current
-      _.each(makeSteps(current, totalPages, 'decrease'), printStepOrGap);
+      _.each(makeSteps(current, totalPages, 'decrease'), printStepOrGap)
       // Last step
-      printStep(bodies.block, totalPages);
+      printStep(bodies.block, totalPages)
       // Next
-      if(bodies.next) {
-        printStep(bodies.next, current + 1);
+      if (bodies.next) {
+        printStep(bodies.next, current + 1)
       }
     }
 
-    return chunk;
-  };
+    return chunk
+  }
 
   /*
   * Get the first item matching the sent in params. Replaces iteration+eq combos.
@@ -539,34 +514,34 @@
   * ```
   * Whatever you send in you will at most ever get one item back.
   */
-  dust.helpers.findWhere = function(chunk, context, bodies, params) {
-    var list = params.list;
-    var key = params.key;
-    var value = params.value;
-    var props;
-    var found;
-    if('list' in params && 'key' in params && 'value' in params) {
-      found = _.find(list, function(obj) {
-        return (obj[key] == value);
-      });
-    }
-    else if('list' in params && 'props' in params) {
+  dust.helpers.findWhere = function (chunk, context, bodies, params) {
+    var list = params.list
+    var key = params.key
+    var value = params.value
+    var props
+    var found
+
+    if ('list' in params && 'key' in params && 'value' in params) {
+      found = _.find(list, function (obj) {
+        return (obj[key] == value)
+      })
+    } else if ('list' in params && 'props' in params) {
       try {
-        props = JSON5.parse(context.resolve(params.props));
+        props = JSON5.parse(context.resolve(params.props))
       } catch(err) {
         throw new Error('The @findWhere dust helper received invalid json for props')
       }
-      found = _.findWhere(list, props);
+      found = _.findWhere(list, props)
+    } else {
+      throw new Error('The @findWhere dust helper is missing a parameter')
     }
-    else {
-      throw new Error('The @findWhere dust helper is missing a parameter');
+
+    if (found) {
+      return chunk.render(bodies.block, context.push(found))
+    } else if ('else' in bodies) {
+      return chunk.render(bodies.else, context)
     }
-    if(found) {
-      return chunk.render(bodies.block, context.push(found));
-    }
-    else if('else' in bodies) {
-      return chunk.render(bodies.else, context);
-    }
-    return chunk;
-  };  
-})(typeof exports !== 'undefined' ? module.exports = require('dustjs-linkedin') : dust);
+
+    return chunk
+  }
+})(typeof exports !== 'undefined' ? module.exports = require('dustjs-linkedin') : dust)

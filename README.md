@@ -1,6 +1,6 @@
 # DADI Dust.js helpers
 
-[![npm version](https://badge.fury.io/js/%40dadi%2Fdustjs-helpers.svg)](https://badge.fury.io/js/%40dadi%2Fdustjs-helpers)
+[![npm (scoped)](https://img.shields.io/npm/v/@dadi/dustjs-helpers.svg?maxAge=10800&style=flat-square)](https://www.npmjs.com/package/@dadi/dustjs-helpers)&nbsp;[![coverage](https://img.shields.io/badge/coverage-62%25-yellow.svg?style=flat-square)](https://github.com/dadi/dustjs-helpers)&nbsp;[![build](http://ci.dadi.technology/dadi/dustjs-helpers/badge?branch=master&service=shield)](http://ci.dadi.technology/dadi/dustjs-helpers)
 
 > A collection of Dust.js helpers used in DADI+ projects.
 
