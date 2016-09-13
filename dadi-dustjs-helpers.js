@@ -1,13 +1,13 @@
 ;(function (dust) {
   if (typeof exports !== undefined) {
-    var dust = require('dustjs-linkedin')
+    var dust = require('dustjs-linkedin') // eslint-disable-line
     var JSON5 = require('json5')
     var marked = require('marked')
     var moment = require('moment')
     var pluralist = require('pluralist')
     var _ = require('underscore')
     var s = require('underscore.string')
-    var html_strip = require('htmlstrip-native')
+    var htmlStrip = require('htmlstrip-native')
   }
 
   /*
@@ -15,10 +15,11 @@
   * Usage: {@Truncate data="{body}" length="250" ellipsis="true"/}
   */
   dust.helpers.Truncate = function (chunk, context, bodies, params) {
-    var data = context.resolve(params.data),
-      length = context.resolve(params.length),
-      ellipsis = context.resolve(params.ellipsis)
+    var data = context.resolve(params.data)
+    var length = context.resolve(params.length)
+    var ellipsis = context.resolve(params.ellipsis)
     var str
+
     if (ellipsis === 'true' && data.length > length) {
       str = data.substr(0, length)
       if (data) {
@@ -49,10 +50,9 @@
     var parseFormat = context.resolve(params.parseFormat)
 
     if (params.unix_sec) {
-      var unix_sec = context.resolve(params.unix_sec)
-      return chunk.write(moment.unix(unix_sec).format(format))
-    }
-    else if (params.unix) {
+      var unixSec = context.resolve(params.unix_sec)
+      return chunk.write(moment.unix(unixSec).format(format))
+    } else if (params.unix) {
       var unix = context.resolve(params.unix)
       return chunk.write(moment.unix(unix / 1000).format(format))
     } else {
@@ -78,7 +78,7 @@
   */
   dust.helpers.formatNumber = function (chunk, context, bodies, params) {
     var data = context.resolve(params.data)
-    var localeString = context.resolve(params.localeString)
+    // var localeString = context.resolve(params.localeString)
     var style = context.resolve(params.style)
     var currency = context.resolve(params.currency)
     var fractionDigits = context.resolve(params.minimumFractionDigits)
@@ -165,8 +165,8 @@
   * Usage: {@forceRender str="{body}" value="{vartoreplace}" /}
   */
   dust.helpers.forceRender = function (chunk, context, bodies, params) {
-    str = context.resolve(params.str)
-    value = context.resolve(params.value)
+    var str = context.resolve(params.str)
+    var value = context.resolve(params.value)
 
     str = str.replace(/{.*?}/gmi, value)
 
@@ -203,7 +203,7 @@
     }
     context = context.push(metaContext)
 
-    while(metaContext.$idx !== params.to) {
+    while (metaContext.$idx !== params.to) {
       if (params.items[metaContext.$idx]) {
         chunk = chunk.render(bodies.block, context.push(params.items[metaContext.$idx]))
       }
@@ -226,7 +226,7 @@
         compact_whitespace: false // compact consecutive '\s' whitespace into single char
       }
 
-      data = html_strip.html_strip(data, options).trim()
+      data = htmlStrip.html_strip(data, options).trim()
 
       chunk.write(data)
       chunk.end()
@@ -238,8 +238,8 @@
   */
 
   dust.helpers.defaultParam = function (chunk, context, bodies, params) {
-    var key = params.key,
-      value = params.value
+    var key = params.key
+    var value = params.value
 
     if (typeof context.get(key) === 'undefined') {
       context.global[key] = value
@@ -272,13 +272,11 @@
 
       if (typeof options.auto !== 'undefined') {
         return chunk.write(multiple ? pluralist.plural(options.auto).anglicised_plural : pluralist.singular(options.auto).singular_suffix)
-      }
-      else if (options.one && options.many) {
+      } else if (options.one && options.many) {
         var str = multiple ? options.many : options.one
         return chunk.write(str)
       }
-    }
-    else if (options.auto) {
+    } else if (options.auto) {
       return chunk.write(options.auto)
     } else {
       return chunk.write('')
@@ -372,7 +370,7 @@
       err = new Error('Parameters provided to @paginate helper are not integers')
     }
 
-    var path = params.path
+    // var path = params.path
     var paginateContext = {
       n: current,
       path: ''
@@ -383,7 +381,7 @@
       return chunk
     }
 
-    var context = context.push(paginateContext)
+    context = context.push(paginateContext)
 
     function printStep (body, n) {
       paginateContext.n = n
@@ -408,17 +406,29 @@
     }
 
     function getStepSize (distance) {
-      if (distance > 550) { return 500; }
-      else if (distance > 110) { return 100; }
-      else if (distance > 53) { return distance - 25; }
-      else if (distance > 23) { return distance - 10; }
-      else if (distance >= 10) { return distance - 5; }
-      else if (distance >= 5) { return distance - 2; } else { return 1; }
+      if (distance > 550) {
+        return 500
+      } else if (distance > 110) {
+        return 100
+      } else if (distance > 53) {
+        return distance - 25
+      } else if (distance > 23) {
+        return distance - 10
+      } else if (distance >= 10) {
+        return distance - 5
+      } else if (distance >= 5) {
+        return distance - 2
+      } else {
+        return 1
+      }
     }
 
     function makeSteps (start, end, tightness) {
       // start & end are non-inclusive
-      var now, final, stepSize, steps = []
+      var now
+      var final
+      var stepSize
+      var steps = []
 
       if (tightness === 'increase') {
         now = start
@@ -523,12 +533,12 @@
 
     if ('list' in params && 'key' in params && 'value' in params) {
       found = _.find(list, function (obj) {
-        return (obj[key] == value)
+        return (obj[key] === value)
       })
     } else if ('list' in params && 'props' in params) {
       try {
         props = JSON5.parse(context.resolve(params.props))
-      } catch(err) {
+      } catch (err) {
         throw new Error('The @findWhere dust helper received invalid json for props')
       }
       found = _.findWhere(list, props)
@@ -544,4 +554,4 @@
 
     return chunk
   }
-})(typeof exports !== 'undefined' ? module.exports = require('dustjs-linkedin') : dust)
+})(typeof exports !== 'undefined' ? module.exports = require('dustjs-linkedin') : dust) // eslint-disable-line

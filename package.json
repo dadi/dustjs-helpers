@@ -4,7 +4,8 @@
   "description": "A collection of Dust.js helpers used in DADI+ projects",
   "main": "dadi-dustjs-helpers.js",
   "scripts": {
-    "test": "env NODE_ENV=test ./node_modules/.bin/istanbul cover --report cobertura --report text --report html --report lcov ./node_modules/.bin/_mocha test",
+    "test": "standard 'dadi-dustjs-helpers.js' && env NODE_ENV=test ./node_modules/.bin/istanbul cover --report cobertura --report text --report html --report lcov ./node_modules/.bin/_mocha test",
+    "posttest": "scripts/coverage.js",
     "build": "uglifyjs dadi-dustjs-helpers.js -o dadi-dustjs-helpers.min.js"
   },
   "repository": {
@@ -21,6 +22,7 @@
     "marked": "^0.3.5",
     "moment": "^2.13.0",
     "pluralist": "^1.0.4",
+    "standard": "*",
     "underscore": "^1.8.3",
     "underscore.string": "^3.3.4"
   },
