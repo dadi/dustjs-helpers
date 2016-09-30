@@ -1,6 +1,6 @@
-;(function (dust) {
+module.exports = exports = function (dust, options) {
   if (typeof exports !== undefined) {
-    var dust = require('dustjs-linkedin') // eslint-disable-line
+//    var dust = require('dustjs-linkedin') // eslint-disable-line
     var JSON5 = require('json5')
     var marked = require('marked')
     var moment = require('moment')
@@ -9,6 +9,8 @@
     var s = require('underscore.string')
     var htmlStrip = require('htmlstrip-native')
   }
+
+  dust.webExtensions = options || {}
 
   /*
   * Returns the supplied 'data' parameter truncated using the supplied 'length' parameter
@@ -339,6 +341,38 @@
     return string.replace(/([.*+?^=!:${}()|\[\]\/\\])/g, '\\$1')
   }
 
+  /**
+   * Generate URLs based on routes by sending in page names & parameters
+   * Usage:
+   * ```
+   * {@url page="pagename" param="val" otherparam=variableval/}
+   * ```
+   */
+  dust.helpers.url = (function () {
+    return function (chunk, context, bodies, params) {
+      if (!dust.webExtensions.components) {
+        throw new Error('The @url helper needs the loaded components from DADI Web.')
+      }
+
+      // Ensure a page name is input
+      if (typeof params.page === 'undefined') {
+        throw new Error('The @url helper needs a page to work. Please send it in as a string (double quote marks if not referencing a variable).')
+      }
+
+      // Get the page
+      var component = _.find(dust.webExtensions.components, function (component) {
+        return component.page.key === params.page
+      })
+
+      if (!component) {
+        throw new Error('The @url helper could not find a page with the key "' + params.page + '".')
+      }
+
+      // Get the route
+      return component.page.toPath(_.omit(params, 'page'))
+    }
+  }())
+
   /*
   * Paginate pages
   * Usage:
@@ -554,4 +588,5 @@
 
     return chunk
   }
-})(typeof exports !== 'undefined' ? module.exports = require('dustjs-linkedin') : dust) // eslint-disable-line
+}// )(typeof exports !== 'undefined' ? module.exports = require('dustjs-linkedin') : dust) // eslint-disable-line
+

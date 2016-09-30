@@ -1,7 +1,7 @@
 var dust = require('dustjs-linkedin')
 var should = require('should')
 
-var helpers = require(__dirname + '/../')
+require(__dirname + '/../')(dust)
 
 describe('Dust Helpers', function (done) {
 
