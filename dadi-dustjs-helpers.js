@@ -1,6 +1,5 @@
-module.exports = exports = function (dust, options) {
-  if (typeof exports !== undefined) {
-//    var dust = require('dustjs-linkedin') // eslint-disable-line
+var ___dadiDustJsHelpers = (function (dust, options) {
+  if (typeof exports !== "undefined") {
     var JSON5 = require('json5')
     var marked = require('marked')
     var moment = require('moment')
@@ -588,5 +587,12 @@ module.exports = exports = function (dust, options) {
 
     return chunk
   }
-}// )(typeof exports !== 'undefined' ? module.exports = require('dustjs-linkedin') : dust) // eslint-disable-line
+})
 
+if (typeof exports !== 'undefined') {
+  module.exports = function (dust, options) {
+    ___dadiDustJsHelpers(dust, options)
+  }
+} else {
+  ___dadiDustJsHelpers(dust)
+}
