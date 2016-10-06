@@ -13,6 +13,37 @@
 npm install @dadi/dustjs-helpers --save
 ```
 
+## Load the helpers
+
+```js
+/* app/utils/helpers/loader.js */
+
+// first, a reference to the loaded pages and routes within your application
+var components = require('@dadi/web').Components
+
+// also, a reference to the Dust template module inside DADI Web
+var dust = require('@dadi/web').Dust
+
+// Load DADI helpers
+require('@dadi/dustjs-helpers')(dust.getEngine(), { components: components })
+```
+
+## More helpers
+
+We also recommend including the common DustJS helpers from https://github.com/rodw/common-dustjs-helpers.
+
+```
+npm install common-dustjs-helpers --save
+```
+
+Add the following to your `loader.js` file
+
+```js
+// Load common-dustjs-helpers
+var commonDustHelpers = require('common-dustjs-helpers')
+new commonDustHelpers.CommonDustjsHelpers().export_helpers_to(dust.getEngine())
+```
+
 ## Development
 
 1. Clone this repository

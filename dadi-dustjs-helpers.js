@@ -1,5 +1,5 @@
-var ___dadiDustJsHelpers = (function (dust, options) {
-  if (typeof exports !== "undefined") {
+var ___dadiDustJsHelpers = (function (dust, options) { // eslint-disable-line
+  if (typeof exports !== 'undefined') {
     var JSON5 = require('json5')
     var marked = require('marked')
     var moment = require('moment')
@@ -594,5 +594,5 @@ if (typeof exports !== 'undefined') {
     ___dadiDustJsHelpers(dust, options)
   }
 } else {
-  ___dadiDustJsHelpers(dust)
+  ___dadiDustJsHelpers(dust) // eslint-disable-line
 }
