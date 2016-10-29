@@ -79,7 +79,7 @@ var ___dadiDustJsHelpers = (function (dust, options) { // eslint-disable-line
   */
   dust.helpers.formatNumber = function (chunk, context, bodies, params) {
     var data = context.resolve(params.data)
-    // var localeString = context.resolve(params.localeString)
+    var localeString = context.resolve(params.localeString)
     var style = context.resolve(params.style)
     var currency = context.resolve(params.currency)
     var fractionDigits = context.resolve(params.minimumFractionDigits)
@@ -90,7 +90,9 @@ var ___dadiDustJsHelpers = (function (dust, options) { // eslint-disable-line
     if (currency) options.currency = currency
     if (fractionDigits) options.minimumFractionDigits = fractionDigits
 
-    if (data) {
+    if (data && localeString) {
+      return chunk.write(data.toLocaleString(localeString, options))
+    } else {
       return chunk.write(data)
     }
   }
