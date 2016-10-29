@@ -90,9 +90,17 @@ var ___dadiDustJsHelpers = (function (dust, options) { // eslint-disable-line
     if (currency) options.currency = currency
     if (fractionDigits) options.minimumFractionDigits = fractionDigits
 
-    if (data && localeString) {
-      return chunk.write(data.toLocaleString(localeString, options))
-    } else {
+    try {
+      if (data && localeString) {
+        var result = parseFloat((data).toFixed(2)).toLocaleString(localeString, options)
+        result = result.replace(/\.([\d])$/, '.$10')
+        return chunk.write(result)
+      } else {
+        return chunk.write(data)
+      }
+    } catch (err) {
+      console.log(err)
+      if (err.stack) console.log(err.stack)
       return chunk.write(data)
     }
   }

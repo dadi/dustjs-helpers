@@ -1,7 +1,7 @@
 # DADI Dust.js helpers
 
 [![npm (scoped)](https://img.shields.io/npm/v/@dadi/dustjs-helpers.svg?maxAge=10800&style=flat-square)](https://www.npmjs.com/package/@dadi/dustjs-helpers)
-[![coverage](https://img.shields.io/badge/coverage-63%25-yellow.svg?style=flat-square)](https://github.com/dadi/dustjs-helpers)
+[![coverage](https://img.shields.io/badge/coverage-66%25-yellow.svg?style=flat-square)](https://github.com/dadi/dustjs-helpers)
 [![build](http://ci.dadi.technology/dadi/dustjs-helpers/badge?branch=master&service=shield)](http://ci.dadi.technology/dadi/dustjs-helpers)
 [![JavaScript Style Guide](https://img.shields.io/badge/code%20style-standard-brightgreen.svg?style=flat-square)](http://standardjs.com/)
 

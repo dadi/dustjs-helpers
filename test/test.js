@@ -54,6 +54,29 @@ describe('Dust Helpers', function (done) {
     })
   })
 
+  // @formatNumber
+  it('formatNumber: should format specified data as currency without fractionDigits', function (done) {
+    var source = "{@formatNumber data=price localeString=\"en-GB\" style=\"currency\" currency=\"GBP\"/}"
+    var expected = "£10"
+
+    dust.renderSource(source, { price: 10 }, function (err, out) {
+      if (err) done(err)
+      out.should.eql(expected)
+      done()
+    })
+  })
+
+  it('formatNumber: should format specified data as currency with fractionDigits', function (done) {
+    var source = "{@formatNumber data=price localeString=\"en-GB\" style=\"currency\" currency=\"GBP\"/}"
+    var expected = "£10.50"
+
+    dust.renderSource(source, { price: 10.5 }, function (err, out) {
+      if (err) done(err)
+      out.should.eql(expected)
+      done()
+    })
+  })
+
   // @formatDate
   // Usage: {@formatDate data="{body}" [unix="{lastModifiedAt}"] format="YYYY-MM-DDTh:mm:ss+01:00"/}
   it('formatDate: should format specified data as date'); // , function (done) {
