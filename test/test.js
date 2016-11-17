@@ -5,6 +5,30 @@ require(__dirname + '/../')(dust)
 
 describe('Dust Helpers', function (done) {
 
+  // @hashtagsToLink
+  it('hashtagsToLink: should wrap hashtag in <a> tag', function (done) {
+    var source = '{@hashtagToLink}This #contains two #tags{/hashtagToLink}'
+    var expected = 'This <a href="contains">#contains</a> two <a href="tags">#tags</a>'
+
+    dust.renderSource(source, {}, function (err, out) {
+      if (err) done(err)
+      out.should.eql(expected)
+      done()
+    })
+  })
+
+  // @hashtagsToLink
+  it('hashtagsToLink: should wrap hashtag in <a> tag AND be prefixed and suffixed', function (done) {
+    var source = '{@hashtagToLink prefix="/search/" suffix="?var=true"}This #contains two #tags{/hashtagToLink}'
+    var expected = 'This <a href="/search/contains?var=true">#contains</a> two <a href="/search/tags?var=true">#tags</a>'
+
+    dust.renderSource(source, {}, function (err, out) {
+      if (err) done(err)
+      out.should.eql(expected)
+      done()
+    })
+  })
+
   // @Truncate
   it('truncate: should truncate specified data with the specified length', function (done) {
     var source = '{@Truncate data="plain text" length="5"/}'
