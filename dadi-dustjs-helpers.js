@@ -597,6 +597,26 @@ var ___dadiDustJsHelpers = (function (dust, options) { // eslint-disable-line
 
     return chunk
   }
+
+  /*
+  * Render references to #hashtags in a block as links.
+  * Can be prefixed or suffixed with other url elements
+  * Usage:
+  * ```
+  * {@hashtagToLink [prefix="/url/"] [suffix="/url/"]}{body}{/hashtagToLink}
+  * ```
+  */
+  dust.helpers.hashtagToLink = function (chunk, context, bodies, params) {
+    var prefix = params.prefix ? context.resolve(params.prefix) : ''
+    var suffix = params.suffix ? context.resolve(params.suffix) : ''
+
+    return chunk.capture(bodies.block, context, function (data, chunk) {
+      data = data.replace(/#([\w\/]*)/gmi, '<a href="' + prefix + '$1' + suffix + '">#$1</a>')
+
+      chunk.write(data)
+      chunk.end()
+    })
+  }
 })
 
 if (typeof exports !== 'undefined') {
