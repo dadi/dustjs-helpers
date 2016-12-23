@@ -347,7 +347,7 @@ var ___dadiDustJsHelpers = (function (dust, options) { // eslint-disable-line
    * Regular Expressions. This is used by the replace helper.
    */
   function escapeRegExp (string) {
-    return string.replace(/([.*+?^=!:${}()|\[\]\/\\])/g, '\\$1')
+    return string.replace(/([.*+?^=!:${}()|[\]/\\])/g, '\\$1')
   }
 
   /**
@@ -611,7 +611,7 @@ var ___dadiDustJsHelpers = (function (dust, options) { // eslint-disable-line
     var suffix = params.suffix ? context.resolve(params.suffix) : ''
 
     return chunk.capture(bodies.block, context, function (data, chunk) {
-      data = data.replace(/#([\w\/]*)/gmi, '<a href="' + prefix + '$1' + suffix + '">#$1</a>')
+      data = data.replace(/#([\w/]*)/gmi, '<a href="' + prefix + '$1' + suffix + '">#$1</a>')
 
       chunk.write(data)
       chunk.end()
