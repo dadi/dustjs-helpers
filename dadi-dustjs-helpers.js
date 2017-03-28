@@ -252,8 +252,13 @@ var ___dadiDustJsHelpers = (function (dust, options) { // eslint-disable-line
     var key = params.key
     var value = params.value
 
-    if (typeof context.get(key) === 'undefined') {
-      context.global[key] = value
+    if (typeof context.get(key) === 'undefined' || context.get(key) === null) {
+      var obj = {}
+      obj[key] = value
+
+      var ctx = dust.makeBase(obj)
+      var global = context.global || {}
+      context.global = _.extend(global, ctx.global)
     }
   }
 

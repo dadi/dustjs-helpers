@@ -1,7 +1,7 @@
 # DADI Dust.js helpers
 
 [![npm (scoped)](https://img.shields.io/npm/v/@dadi/dustjs-helpers.svg?maxAge=10800&style=flat-square)](https://www.npmjs.com/package/@dadi/dustjs-helpers)
-[![coverage](https://img.shields.io/badge/coverage-67%25-yellow.svg?style=flat-square)](https://github.com/dadi/dustjs-helpers)
+[![coverage](https://img.shields.io/badge/coverage-78%25-yellow.svg?style=flat?style=flat-square)](https://github.com/dadi/dustjs-helpers)
 [![Build Status](https://travis-ci.org/dadi/dustjs-helpers.svg?branch=master)](https://travis-ci.org/dadi/dustjs-helpers)
 [![JavaScript Style Guide](https://img.shields.io/badge/code%20style-standard-brightgreen.svg?style=flat-square)](http://standardjs.com/)
 [![semantic-release](https://img.shields.io/badge/%20%20%F0%9F%93%A6%F0%9F%9A%80-semantic--release-e10079.svg?style=flat-square)](https://github.com/semantic-release/semantic-release)

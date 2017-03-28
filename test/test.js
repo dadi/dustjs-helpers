@@ -103,23 +103,22 @@ describe('Dust Helpers', function (done) {
 
   // @formatDate
   // Usage: {@formatDate data="{body}" [unix="{lastModifiedAt}"] format="YYYY-MM-DDTh:mm:ss+01:00"/}
-  it('formatDate: should format specified data as date'); // , function (done) {
-  //
-  //   var source = "{@formatDate data=\"{body}\" unix=\"{lastModifiedAt}\" format=\"YYYY-MM-DDTh:mm:ss+01:00\"/}"
-  //   var expected = "plain text"
-  //
-  //   dust.renderSource(source, {}, function (err, out) {
-  //     if (err) done(err)
-  //     out.should.eql(expected)
-  //     done()
-  //   })
-  // })
+  it('formatDate: should format specified data as date', function (done) {
+    var source = "{@formatDate data=body format=\"YYYY-MM-DD\"/}"
+    dust.renderSource(source, { body: new Date().toISOString() }, function (err, out) {
+      if (err) done(err)
+      var pattern = /[\d]{4}-\d{2}-\d{2}/
+      var re = new RegExp(pattern)
+      re.test(out).should.eql(true)
+      done()
+    })
+  })
 
   // @markdown
   it('markdown: should format as html', function (done) {
-    var source = 'Here is a paragraph'
+    var source = 'Here is a paragraph with a [link](http://google.com|target=_blank)'
     var tmpl = '{@markdown}' + source + '{/markdown}'
-    var expected = '<p>Here is a paragraph</p>\n'
+    var expected = '<p>Here is a paragraph with a <a href="http://google.com" target="_blank" >link</a></p>\n'
 
     dust.renderSource(tmpl, {}, function (err, out) {
       if (err) done(err)
@@ -245,11 +244,37 @@ describe('Dust Helpers', function (done) {
     })
   })
 
+  // @defaultParam
+  it('defaultParam: should add the specified key and value to context', function (done) {
+    var tmpl = '{@defaultParam key="pageData" value="1234"/}{pageData}'
+
+    var expected = '1234'
+
+    dust.renderSource(tmpl, {  }, function (err, out) {
+      if (err) done(err)
+      out.should.eql(expected)
+      done()
+    })
+  })
+
   // @numberCommas
   it('numberCommas: should format number with commas', function (done) {
     var tmpl = '{@numberCommas}1024{/numberCommas}'
 
     var expected = '1,024'
+
+    dust.renderSource(tmpl, {  }, function (err, out) {
+      if (err) done(err)
+      out.should.eql(expected)
+      done()
+    })
+  })
+
+  // @htmlEncode
+  it('htmlEncode: should encode html to json', function (done) {
+    var body = '{ "hello": "world" }'
+    var tmpl = '{@htmlEncode}' + body + '{/htmlEncode}'
+    var expected = JSON.stringify(body)
 
     dust.renderSource(tmpl, {  }, function (err, out) {
       if (err) done(err)
