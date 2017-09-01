@@ -231,7 +231,7 @@ var ___dadiDustJsHelpers = (function (dust, options) { // eslint-disable-line
   */
   dust.helpers.htmlstrip = function (chunk, context, bodies, params) {
     return chunk.capture(bodies.block, context, function (data, chunk) {
-      data = htmlStrip.html_strip(data).trim()
+      data = htmlStrip(data).trim()
 
       chunk.write(data)
       chunk.end()
