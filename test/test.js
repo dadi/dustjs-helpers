@@ -140,6 +140,18 @@ describe('Dust Helpers', function (done) {
     })
   })
 
+  it('markdown: should format as html without <p> wrappers', function (done) {
+    var source = 'Enjoyable to drive thanks to communicative steering. Diesel versions are frugal and the larger engines have plenty of power. Solid residual values and the driving position is spot-on. A a new [**BMW 1 Series**](http://www.whatcar.com/car-reviews/bmw/1-series-hatchback/summary/26064-5 "BMW 1 Series review") has been launched recently.'
+    var tmpl = '{@soberMarkdown}' + source + '{/soberMarkdown}'
+    var expected = 'Here is a paragraph\n'
+
+    dust.renderSource(tmpl, {}, function (err, out) {
+      if (err) done(err)
+      out.should.eql(expected)
+      done()
+    })
+  })
+
   // @forceRender
   // * Usage: {@forceRender str="{body}" value="{vartoreplace}" /}
   it('forceRender: should evaluate passed parameters', function (done) {
