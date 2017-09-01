@@ -6,7 +6,7 @@ var ___dadiDustJsHelpers = (function (dust, options) { // eslint-disable-line
     var pluralist = require('pluralist')
     var _ = require('underscore')
     var s = require('underscore.string')
-    var htmlStrip = require('htmlstrip-native')
+    var htmlStrip = require('striptags')
   }
 
   dust.webExtensions = options || {}
@@ -231,13 +231,7 @@ var ___dadiDustJsHelpers = (function (dust, options) { // eslint-disable-line
   */
   dust.helpers.htmlstrip = function (chunk, context, bodies, params) {
     return chunk.capture(bodies.block, context, function (data, chunk) {
-      var options = {
-        include_script: false, // exclude the content of <script> tags
-        include_style: false, // exclude the content of <style> tags
-        compact_whitespace: false // compact consecutive '\s' whitespace into single char
-      }
-
-      data = htmlStrip.html_strip(data, options).trim()
+      data = htmlStrip.html_strip(data).trim()
 
       chunk.write(data)
       chunk.end()
