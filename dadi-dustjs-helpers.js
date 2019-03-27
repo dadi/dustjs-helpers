@@ -145,6 +145,8 @@ var ___dadiDustJsHelpers = (function (dust, options) { // eslint-disable-line
 
     if (bodies.block) {
       return chunk.capture(bodies.block, context, function (string, chunk) {
+        // decode right arrow
+        string = string.replace(/&gt;+/g, '>')
         chunk.end(marked(string, { renderer: renderer }))
       })
     }
@@ -157,6 +159,10 @@ var ___dadiDustJsHelpers = (function (dust, options) { // eslint-disable-line
   dust.helpers.soberMarkdown = function (chunk, context, bodies, params) {
     if (bodies.block) {
       return chunk.capture(bodies.block, context, function (string, chunk) {
+
+        // decode right arrow
+        string = string.replace(/&gt;+/g, '>')
+
         var md = marked(string)
 
         // Replace </p><p> with <br>
