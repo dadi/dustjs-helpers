@@ -127,6 +127,18 @@ describe('Dust Helpers', function (done) {
     })
   })
 
+  it('markdown: should format blockquote as html', function (done) {
+    var source = '&gt; Quote me silly'
+    var tmpl = '{@markdown}' + source + '{/markdown}'
+    var expected = '<blockquote>\n<p>Quote me silly</p>\n</blockquote>\n'
+
+    dust.renderSource(tmpl, {}, function (err, out) {
+      if (err) done(err)
+      out.should.eql(expected)
+      done()
+    })
+  })
+
   // @soberMarkdown
   it('markdown: should format as html without <p> wrappers', function (done) {
     var source = 'Here is a paragraph'
@@ -144,6 +156,18 @@ describe('Dust Helpers', function (done) {
     var source = 'Enjoyable to drive thanks to communicative steering. Diesel versions are frugal and the larger engines have plenty of power. Solid residual values and the driving position is spot-on. A a new [**BMW 1 Series**](http://www.whatcar.com/car-reviews/bmw/1-series-hatchback/summary/26064-5 "BMW 1 Series review") has been launched recently.'
     var tmpl = '{@soberMarkdown}' + source + '{/soberMarkdown}'
     var expected = 'Enjoyable to drive thanks to communicative steering. Diesel versions are frugal and the larger engines have plenty of power. Solid residual values and the driving position is spot-on. A a new <a href="http://www.whatcar.com/car-reviews/bmw/1-series-hatchback/summary/26064-5" title="BMW 1 Series review"><strong>BMW 1 Series</strong></a> has been launched recently.\n'
+
+    dust.renderSource(tmpl, {}, function (err, out) {
+      if (err) done(err)
+      out.should.eql(expected)
+      done()
+    })
+  })
+
+  it('markdown: should format blockquote as html', function (done) {
+    var source = '&gt; Quote me silly'
+    var tmpl = '{@soberMarkdown}' + source + '{/soberMarkdown}'
+    var expected = '<blockquote>\nQuote me silly\n</blockquote>\n'
 
     dust.renderSource(tmpl, {}, function (err, out) {
       if (err) done(err)
