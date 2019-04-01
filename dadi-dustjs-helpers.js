@@ -159,18 +159,13 @@ var ___dadiDustJsHelpers = (function (dust, options) { // eslint-disable-line
   dust.helpers.soberMarkdown = function (chunk, context, bodies, params) {
     if (bodies.block) {
       return chunk.capture(bodies.block, context, function (string, chunk) {
-
         // decode right arrow
         string = string.replace(/&gt;+/g, '>')
-
         var md = marked(string)
-
         // Replace </p><p> with <br>
         var str = md.replace(/<\/p><p[^>]*>/igm, '<br>')
-
         // Remove wrapping <p></p> tags
         str = str.replace(/<p[^>]*>(.*?)<\/p>/igm, '$1')
-
         chunk.end(str)
       })
     }
@@ -184,9 +179,7 @@ var ___dadiDustJsHelpers = (function (dust, options) { // eslint-disable-line
   dust.helpers.forceRender = function (chunk, context, bodies, params) {
     var str = context.resolve(params.str)
     var value = context.resolve(params.value)
-
     str = str.replace(/{.*?}/gmi, value)
-
     return chunk.write(str)
   }
 
