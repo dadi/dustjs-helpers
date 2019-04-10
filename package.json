@@ -21,7 +21,7 @@
   "homepage": "https://github.com/dadi/dustjs-helpers#readme",
   "dependencies": {
     "json5": "^0.5.0",
-    "marked": "^0.3.5",
+    "marked": "^0.6.2",
     "moment": "^2.13.0",
     "pluralist": "^1.0.4",
     "snyk": "^1.49.4",
