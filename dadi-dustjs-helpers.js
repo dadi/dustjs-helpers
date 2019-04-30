@@ -84,7 +84,7 @@ var ___dadiDustJsHelpers = (function (dust, options) { // eslint-disable-line
     var currency = context.resolve(params.currency)
     var fractionDigits = context.resolve(params.minimumFractionDigits)
 
-    var options = {style: 'decimal', minimumFractionDigits: 0}
+    var options = { style: 'decimal', minimumFractionDigits: 0 }
 
     if (style) options.style = style
     if (currency) options.currency = currency
